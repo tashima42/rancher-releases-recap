@@ -1,0 +1,160 @@
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"log"
+	"os"
+	"strconv"
+	"strings"
+
+	"github.com/google/go-github/v57/github"
+	"golang.org/x/oauth2"
+)
+
+type Data struct {
+	Releases        map[int]Release `json:"releases"`
+	Years           []string        `json:"years"`
+	PreReleaseCount []int           `json:"preReleaseCount"`
+	GaReleaseCount  []int           `json:"gaReleaseCount"`
+}
+type Release struct {
+	Type map[string][]int `json:"type"`
+}
+
+const (
+	dataDir = "data"
+	org     = "rancher"
+	repo    = "rancher-prime"
+)
+
+func main() {
+	writeReleaseData()
+}
+
+func writeReleaseData() {
+	data, err := extractReleasesData()
+	if err != nil {
+		log.Fatal(err)
+	}
+	b, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := os.WriteFile(dataDir+"/"+repo+"-monthly-releases.json", b, 0644); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func writeReleases() {
+	// Get GitHub token from environment variable
+	token := os.Getenv("GITHUB_TOKEN")
+	if token == "" {
+		log.Fatal("GITHUB_TOKEN environment variable is required")
+	}
+
+	// Configure GitHub client with authentication
+	ctx := context.Background()
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: token},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+	client := github.NewClient(tc)
+
+	// check(ctx, client, "rancher", "rancher")
+	r, err := releases(ctx, client, org, repo)
+	if err != nil {
+		log.Fatal(err)
+	}
+	b, err := json.MarshalIndent(r, "", "  ")
+	if err := os.WriteFile(dataDir+"/"+repo+"-releases.json", b, 0644); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func releases(ctx context.Context, client *github.Client, owner, repo string) ([]github.RepositoryRelease, error) {
+	opt := &github.ListOptions{PerPage: 100}
+
+	allReleases := []github.RepositoryRelease{}
+
+	for {
+		releases, resp, err := client.Repositories.ListReleases(ctx, owner, repo, opt)
+		log.Printf("Releases: %d\n", len(releases))
+		log.Printf("NextPage: %d\n", resp.NextPage)
+		if err != nil {
+			return nil, err
+		}
+		for _, release := range releases {
+			allReleases = append(allReleases, *release)
+		}
+		if resp.NextPage == 0 {
+			break
+		}
+		opt.Page = resp.NextPage
+	}
+
+	return allReleases, nil
+}
+
+func extractReleasesData() (Data, error) {
+	data := Data{
+		Releases: make(map[int]Release),
+	}
+
+	var releases []github.RepositoryRelease
+
+	f, err := os.ReadFile(dataDir + "/" + repo + "-releases.json")
+	if err != nil {
+		return Data{}, err
+	}
+
+	if err := json.Unmarshal(f, &releases); err != nil {
+		return Data{}, err
+	}
+
+	for _, release := range releases {
+		releaseDate := release.GetCreatedAt().Time
+		monthIndex := releaseDate.Month() - 1
+		year := releaseDate.Year()
+
+		if _, ok := data.Releases[year]; !ok {
+			data.Releases[year] = Release{
+				Type: make(map[string][]int),
+			}
+		}
+
+		if data.Releases[year].Type["ga"] == nil {
+			data.Releases[year].Type["ga"] = make([]int, 12)
+		}
+		if data.Releases[year].Type["pre"] == nil {
+			data.Releases[year].Type["pre"] = make([]int, 12)
+		}
+
+		releaseType := "ga"
+
+		if strings.Contains(release.GetTagName(), "-") {
+			releaseType = "pre"
+		}
+
+		data.Releases[year].Type[releaseType][monthIndex] += 1
+	}
+
+	for year, release := range data.Releases {
+
+		data.Years = append(data.Years, strconv.Itoa(year))
+
+		for releaseType, month := range release.Type {
+			yearTotal := 0
+			for _, count := range month {
+				yearTotal += count
+			}
+			if releaseType == "ga" {
+				data.GaReleaseCount = append(data.GaReleaseCount, yearTotal)
+			} else {
+				data.PreReleaseCount = append(data.PreReleaseCount, yearTotal)
+			}
+		}
+	}
+
+	return data, nil
+}

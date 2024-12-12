@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>2024 Releases</title>
+    <link rel="stylesheet" href="./style.css">
+    <!-- <link rel="icon" href="./favicon.ico" type="image/x-icon"> -->
+  </head>
+  <body>
+    <main>
+      <h1>2024 Rancher Releases recap</h1>  
+      <div class="info-wrapper">
+        <div class="rancher-releases">
+          <h2 id="rancher-title">Rancher</h2>
+          <div class="release-info">
+            <p>Total: <span id="rancher-releases-total"></span></p>
+            <p>Total GA: <span id="rancher-ga-total"></span></p>
+            <p>Total Pre-Release: <span id="rancher-pre-total"></span></p>
+          </div>
+          <div class="chart-container">
+            <h3>GA</h3>
+            <canvas id="rancher-ga">Your browser does not support canvas</canvas>
+          </div>
+          <div class="chart-container">
+            <h3>Pre-Release</h3>
+            <canvas id="rancher-pre">Your browser does not support canvas</canvas>
+          </div>
+          <div class="chart-container">
+            <h3>Releases over the years</h3>
+            <canvas id="rancher-compare-years">Your browser does not support canvas</canvas>
+          </div>
+        </div>
+        <div class="rancher-prime-releases">
+          <h2 id="rancher-title">Rancher Prime</h2>
+          <div class="release-info">
+            <p>Total: <span id="rancher-prime-releases-total"></span></p>
+          </div>
+          <div class="chart-container">
+            <h3>Prime Releases</h3>
+            <canvas id="rancher-prime-compare-months">Your browser does not support canvas</canvas>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script src="utils.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
+

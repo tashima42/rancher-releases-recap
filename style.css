@@ -1,0 +1,47 @@
+body {
+  font-family: 'Courier New', monospace;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 25vw;
+  margin-right: 25vw;
+  width: 50vw;
+}
+
+.info-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#rancher-title {
+  background-color: #2453ff;
+  color: white;
+  padding: 5px 10px;
+}
+
+.ga-pre-container {
+  display: flex;
+  justify-content: space-around;
+
+  width: 100%;
+  height: 50vh;
+}
+
+.chart-container {
+  width: 95%;
+  height: 95%;
+  margin: 2.5%;
+}
+
+@media (max-width: 768px) {
+  main {
+    margin-left: 5vw;
+    margin-right: 5vw;
+    width: 90vw;
+  }
+}
+
