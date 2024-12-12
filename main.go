@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"log"
 	"os"
 	"strconv"
@@ -12,7 +13,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-type Data struct {
+type ReleasesData struct {
 	Releases        map[int]Release `json:"releases"`
 	Years           []string        `json:"years"`
 	PreReleaseCount []int           `json:"preReleaseCount"`
@@ -25,11 +26,12 @@ type Release struct {
 const (
 	dataDir = "data"
 	org     = "rancher"
-	repo    = "rancher-prime"
+	repo    = "rancher"
 )
 
 func main() {
-	writeReleaseData()
+	// writeReleaseData()
+	// writeWorkflows()
 }
 
 func writeReleaseData() {
@@ -46,22 +48,41 @@ func writeReleaseData() {
 	}
 }
 
-func writeReleases() {
-	// Get GitHub token from environment variable
+func githubClient(ctx context.Context) (*github.Client, error) {
 	token := os.Getenv("GITHUB_TOKEN")
 	if token == "" {
-		log.Fatal("GITHUB_TOKEN environment variable is required")
+		return nil, errors.New("GITHUB_TOKEN environment variable is required")
 	}
 
-	// Configure GitHub client with authentication
-	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: token},
 	)
 	tc := oauth2.NewClient(ctx, ts)
-	client := github.NewClient(tc)
+	return github.NewClient(tc), nil
+}
 
-	// check(ctx, client, "rancher", "rancher")
+func writeWorkflows() {
+	ctx := context.Background()
+	client, err := githubClient(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	w, err := workflows(ctx, client, org, repo)
+	if err != nil {
+		log.Fatal(err)
+	}
+	b, err := json.MarshalIndent(w, "", "  ")
+	if err := os.WriteFile(dataDir+"/"+repo+"-workflows.json", b, 0644); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func writeReleases() {
+	ctx := context.Background()
+	client, err := githubClient(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
 	r, err := releases(ctx, client, org, repo)
 	if err != nil {
 		log.Fatal(err)
@@ -96,8 +117,33 @@ func releases(ctx context.Context, client *github.Client, owner, repo string) ([
 	return allReleases, nil
 }
 
-func extractReleasesData() (Data, error) {
-	data := Data{
+func workflows(ctx context.Context, client *github.Client, owner, repo string) ([]github.WorkflowRun, error) {
+	gopt := &github.ListOptions{PerPage: 100}
+	opt := github.ListWorkflowRunsOptions{ListOptions: *gopt}
+
+	allWorkflows := []github.WorkflowRun{}
+
+	for {
+		workflows, resp, err := client.Actions.ListWorkflowRunsByFileName(ctx, owner, repo, "push-release.yml", &opt)
+		log.Printf("Releases: %d\n", *workflows.TotalCount)
+		log.Printf("NextPage: %d\n", resp.NextPage)
+		if err != nil {
+			return nil, err
+		}
+		for _, workflow := range workflows.WorkflowRuns {
+			allWorkflows = append(allWorkflows, *workflow)
+		}
+		if resp.NextPage == 0 {
+			break
+		}
+		opt.Page = resp.NextPage
+	}
+
+	return allWorkflows, nil
+}
+
+func extractReleasesData() (ReleasesData, error) {
+	data := ReleasesData{
 		Releases: make(map[int]Release),
 	}
 
@@ -105,11 +151,11 @@ func extractReleasesData() (Data, error) {
 
 	f, err := os.ReadFile(dataDir + "/" + repo + "-releases.json")
 	if err != nil {
-		return Data{}, err
+		return ReleasesData{}, err
 	}
 
 	if err := json.Unmarshal(f, &releases); err != nil {
-		return Data{}, err
+		return ReleasesData{}, err
 	}
 
 	for _, release := range releases {
