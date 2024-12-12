@@ -1,0 +1,34 @@
+{
+  "2024": {
+    "10": {
+      "successCount": 240,
+      "failureCount": 63,
+      "totalCount": 303
+    },
+    "11": {
+      "successCount": 112,
+      "failureCount": 104,
+      "totalCount": 216
+    },
+    "12": {
+      "successCount": 64,
+      "failureCount": 22,
+      "totalCount": 86
+    },
+    "7": {
+      "successCount": 47,
+      "failureCount": 63,
+      "totalCount": 110
+    },
+    "8": {
+      "successCount": 139,
+      "failureCount": 97,
+      "totalCount": 236
+    },
+    "9": {
+      "successCount": 165,
+      "failureCount": 72,
+      "totalCount": 237
+    }
+  }
+}

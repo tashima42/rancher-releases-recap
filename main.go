@@ -19,9 +19,20 @@ type ReleasesData struct {
 	PreReleaseCount []int           `json:"preReleaseCount"`
 	GaReleaseCount  []int           `json:"gaReleaseCount"`
 }
+
 type Release struct {
 	Type map[string][]int `json:"type"`
 }
+
+// year -> month -> workflow data
+type (
+	WorkflowsData map[int]map[int]*Workflow
+	Workflow      struct {
+		SuccessCount int `json:"successCount"`
+		FailureCount int `json:"failureCount"`
+		TotalCount   int `json:"totalCount"`
+	}
+)
 
 const (
 	dataDir = "data"
@@ -30,8 +41,23 @@ const (
 )
 
 func main() {
+	writeWorkflowsData()
 	// writeReleaseData()
 	// writeWorkflows()
+}
+
+func writeWorkflowsData() {
+	data, err := extractWorkflowsData()
+	if err != nil {
+		log.Fatal(err)
+	}
+	b, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := os.WriteFile(dataDir+"/"+repo+"-monthly-workflows.json", b, 0644); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func writeReleaseData() {
@@ -202,5 +228,42 @@ func extractReleasesData() (ReleasesData, error) {
 		}
 	}
 
+	return data, nil
+}
+
+func extractWorkflowsData() (WorkflowsData, error) {
+	data := WorkflowsData{}
+
+	var workflows []github.WorkflowRun
+
+	f, err := os.ReadFile(dataDir + "/" + repo + "-workflows.json")
+	if err != nil {
+		return WorkflowsData{}, err
+	}
+
+	if err := json.Unmarshal(f, &workflows); err != nil {
+		return WorkflowsData{}, err
+	}
+
+	for _, workflow := range workflows {
+		workflowDate := workflow.GetCreatedAt().Time
+		month := int(workflowDate.Month())
+		year := int(workflowDate.Year())
+
+		if _, ok := data[year]; !ok {
+			data[year] = make(map[int]*Workflow)
+		}
+
+		if _, ok := data[year][month]; !ok {
+			data[year][month] = &Workflow{}
+		}
+
+		if workflow.GetConclusion() == "success" {
+			data[year][month].SuccessCount += 1
+		} else {
+			data[year][month].FailureCount += 1
+		}
+		data[year][month].TotalCount += 1
+	}
 	return data, nil
 }

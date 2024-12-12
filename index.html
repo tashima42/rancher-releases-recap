@@ -32,6 +32,16 @@
             <canvas id="rancher-compare-years">Your browser does not support canvas</canvas>
           </div>
         </div>
+        <div class="rancher-actions">
+          <h2 id="rancher-title">Workflows</h2>
+          <div class="release-info">
+            <p>Total: <span id="rancher-prime-releases-total"></span></p>
+          </div>
+          <div class="chart-container">
+            <h3>Runs results</h3>
+            <canvas id="rancher-actions-results">Your browser does not support canvas</canvas>
+          </div>
+        </div>
         <div class="rancher-prime-releases">
           <h2 id="rancher-title">Rancher Prime</h2>
           <div class="release-info">
@@ -45,6 +55,7 @@
       </div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script src="utils.js"></script>
     <script src="index.js"></script>
   </body>
