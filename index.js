@@ -16,7 +16,7 @@ const rancherActionsFailure = [63, 97, 72, 63, 104, 22]
 const utils = new Utils();
 Chart.register(ChartDataLabels)
 
-function releasesChart(id, label, data, color) {
+function releasesChart(id, label, data, color, labelIndex, labelMessage) {
   const ctx = document.getElementById(id);
 
   const labels = utils.months({count: 12});
@@ -36,12 +36,20 @@ function releasesChart(id, label, data, color) {
     options: {
       responsive: true,
       plugins: {
-        legend: { display: false }
+        legend: { display: false },
+        datalabels: {
+          anchor: 'end',
+          align: 'top',
+          formatter: (value, context) => {
+            if (context.dataIndex === labelIndex) {
+              return labelMessage;
+            } 
+            return ''; 
+          },
+        },
       },
     },
   };
-
-  const comment = commentPlugin();
 
   new Chart(ctx, config);
 }
@@ -76,7 +84,7 @@ function releasesOverYears(years, ga, pre) {
   new Chart(ctx, config)
 }
 
-function actionsResults(months, total, success, failure) {
+function actionsResults(months, total, success, failure, labelIndex, labelMessage) {
   const ctx = document.getElementById("rancher-actions-results")
 
   const config = {
@@ -106,31 +114,21 @@ function actionsResults(months, total, success, failure) {
     },
     options: {
       responsive: true,
+      plugins: {
+        datalabels: {
+          anchor: 'end',
+          align: 'top',
+          formatter: (value, context) => {
+            if (context.dataIndex === labelIndex && context.dataset.label === "Failure") {
+              return labelMessage;
+            } 
+            return ''; 
+          },
+        },
+      }
     }
   };
   new Chart(ctx, config)
-}
-
-function commentPlugin() {
-  return {
-    id: 'commentPlugin',
-    afterDatasetDraw(chart, args, options) {
-      const { ctx, data } = chart;
-      ctx.save();
-
-      // Example: Add a comment above the point with the highest value
-      const maxValueIndex = data.datasets[0].data.indexOf(Math.max(...data.datasets[0].data));
-      const meta = chart.getDatasetMeta(0);
-      const position = meta.data[maxValueIndex].getCenterPoint();
-
-      ctx.font = '12px Arial';
-      ctx.fillStyle = 'red';
-      ctx.textAlign = 'center';
-      ctx.fillText('Peak Sales!', position.x, position.y - 20); 
-
-      ctx.restore();
-    }
-  };
 }
 
 function totals() {
@@ -148,11 +146,12 @@ function totals() {
 }
 
 totals()
-releasesChart("rancher-ga", "Rancher GA", rancherGaReleasesMonths, utils.CHART_COLORS.blue);
-releasesChart("rancher-pre", "Rancher Pre", rancherPreReleasesMonths, utils.CHART_COLORS.red)
-releasesChart("rancher-prime-compare-months", "Rancher Prime", rancherPrimeReleasesMonths, utils.CHART_COLORS.yellow)
+releasesChart("rancher-ga", "Rancher GA", rancherGaReleasesMonths, utils.CHART_COLORS.blue, 6, "Release Team starts releasing rancher");
+releasesChart("rancher-pre", "Rancher Pre", rancherPreReleasesMonths, utils.CHART_COLORS.red, 6, "Release Team starts releasing rancher")
 
-actionsResults(rancherActionsMonths, rancherActionsTotal, rancherActionsSuccess, rancherActionsFailure)
+releasesChart("rancher-prime-compare-months", "Rancher Prime", rancherPrimeReleasesMonths, utils.CHART_COLORS.yellow, 0, "")
+
+actionsResults(rancherActionsMonths, rancherActionsTotal, rancherActionsSuccess, rancherActionsFailure, 3, "Self-hosted runners migration")
 
 releasesOverYears(releasesYears, gaReleasesPerYear, preReleasesPerYear)
 
