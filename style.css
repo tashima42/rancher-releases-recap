@@ -48,6 +48,18 @@ main {
   margin: 2.5%;
 }
 
+#rancher-mouse {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  transition: left 0.2s ease-in-out, top 0.2s ease-in-out;
+}
+
+#rancher-mouse-logo {
+  width: 20px;
+  height: 20px;
+}
+
 @media (max-width: 768px) {
   main {
     margin-left: 5vw;

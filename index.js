@@ -187,7 +187,30 @@ function totals() {
   const totalActions = document.getElementById("rancher-actions-total")
   totalActions.innerText = rancherActionsTotalRuns
 }
+function randInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
 
+
+const rancherMouseDiv = document.getElementById("rancher-mouse")
+
+function handleMouse() {
+  rancherMouseDiv.onmouseenter = () => drawRancherMouseLogo(rancherMouseDiv)
+}
+
+function drawRancherMouseLogo(img) {
+  const w = window.innerWidth
+  const h = window.innerHeight
+
+  const x = randInt(30, w - 100)
+  const y = randInt(30, h - 100)
+
+  img.style.left = x + "px";
+  img.style.top = y + "px";
+}
+
+drawRancherMouseLogo(rancherMouseDiv)
+handleMouse()
 totals()
 releasesChart("rancher-ga", releasesMonths, "Rancher GA", rancherGaReleasesMonths, utils.CHART_COLORS.blue, 6, "Release Team starts releasing rancher");
 releasesChart("rancher-pre", releasesMonths,  "Rancher Pre", rancherPreReleasesMonths, utils.CHART_COLORS.red, 6, "Release Team starts releasing rancher")
