@@ -199,15 +199,35 @@ function handleMouse() {
 }
 
 function drawRancherMouseLogo(img) {
-  const w = window.innerWidth
-  const h = window.innerHeight
+  const minViewportWidth = window.scrollX; // Minimum width (left edge)
+  const maxViewportWidth = window.scrollX + window.innerWidth; // Maximum width (right edge)
 
-  const x = randInt(30, w - 100)
-  const y = randInt(30, h - 100)
+  const minViewportHeight = window.scrollY; // Minimum height is the current scroll position
+  const maxViewportHeight = window.scrollY + window.innerHeight; // Maximum height is scroll position plus viewport height
+
+  const x = randInt(minViewportWidth, maxViewportWidth)
+  const y = randInt(minViewportHeight, maxViewportHeight)
 
   img.style.left = x + "px";
   img.style.top = y + "px";
 }
+
+function checkViewport() {
+  const imgRect = rancherMouseDiv.getBoundingClientRect();
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+
+  if ( imgRect.right > w || imgRect.bottom > h || imgRect.left < 0 || imgRect.top < 0) {
+    drawRancherMouseLogo(rancherMouseDiv);
+  }
+}
+
+// from: https://firefox-source-docs.mozilla.org/performance/scroll-linked_effects.html
+var timeoutId = null;
+addEventListener("scroll", function() {
+    if (timeoutId) clearTimeout(timeoutId);
+    timeoutId = setTimeout(checkViewport, 25, parseInt(rancherMouseDiv.style.top));
+}, true);
 
 drawRancherMouseLogo(rancherMouseDiv)
 handleMouse()
