@@ -205,7 +205,7 @@ function drawRancherMouseLogo(img) {
   const minViewportHeight = window.scrollY; // Minimum height is the current scroll position
   const maxViewportHeight = window.scrollY + window.innerHeight; // Maximum height is scroll position plus viewport height
 
-  const x = randInt(minViewportWidth, maxViewportWidth)
+  const x = randInt(minViewportWidth, maxViewportWidth - 100)
   const y = randInt(minViewportHeight, maxViewportHeight)
 
   img.style.left = x + "px";
@@ -223,8 +223,8 @@ function checkViewport() {
 }
 
 function toggleRancherMouse() {
-  rancherMouseDiv.classList.toggle("hidden")
   drawRancherMouseLogo(rancherMouseDiv)
+  rancherMouseDiv.classList.toggle("hidden")
 }
 
 // from: https://firefox-source-docs.mozilla.org/performance/scroll-linked_effects.html
