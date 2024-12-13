@@ -222,6 +222,10 @@ function checkViewport() {
   }
 }
 
+function toggleRancherMouse() {
+  rancherMouseDiv.classList.toggle("hidden")
+}
+
 // from: https://firefox-source-docs.mozilla.org/performance/scroll-linked_effects.html
 var timeoutId = null;
 addEventListener("scroll", function() {
