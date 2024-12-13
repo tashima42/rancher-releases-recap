@@ -92,6 +92,22 @@ function releasesOverYears(years, ga, pre) {
     },
     options: {
       responsive: true,
+      plugins: {
+        datalabels: {
+          backgroundColor: function(context) {
+            return context.dataset.backgroundColor;
+          },
+          borderRadius: 4,
+          color: 'white',
+          font: {
+            weight: 'bold'
+          },
+          formatter: Math.round,
+          padding: 2,
+          align: "top",
+          display: "auto",
+        },
+      },
     }
   }
   
@@ -136,7 +152,7 @@ function actionsResults(months, total, success, failure, labelIndex, labelMessag
             if (context.dataIndex === labelIndex && context.dataset.label === "Failure") {
               return labelMessage;
             } 
-            return ''; 
+            return value; 
           },
           backgroundColor: function(context) {
             return context.dataset.backgroundColor;
@@ -146,7 +162,8 @@ function actionsResults(months, total, success, failure, labelIndex, labelMessag
           font: {
             weight: 'bold'
           },
-          padding: 0,
+          padding: 2,
+          display: "auto",
         },
       }
     }
