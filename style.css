@@ -92,5 +92,9 @@ main {
   #rancher-mouse {
     display: none;
   }
+
+  #toggle-logo {
+    display: none;
+  }
 }
 

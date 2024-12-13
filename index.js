@@ -224,6 +224,7 @@ function checkViewport() {
 
 function toggleRancherMouse() {
   rancherMouseDiv.classList.toggle("hidden")
+  drawRancherMouseLogo(rancherMouseDiv)
 }
 
 // from: https://firefox-source-docs.mozilla.org/performance/scroll-linked_effects.html
