@@ -1,6 +1,6 @@
 const year = 2024
 const releasesMonths = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', "Dec" ]
-const rancherPrimeMonths = ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ]
+const rancherPrimeMonths = ['Jul', 'Aug', 'Sep', 'Oct', 'Nov']
 const rancherActionsMonths = [ 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ]
 
 const utils = new Utils();
