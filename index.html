@@ -4,53 +4,93 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>2024 Releases</title>
+    <link rel="icon" type="image/png" href="https://prime.ribs.rancher.io/assets/img/favicon.png">
+    <title>Rancher Releases Recap</title>
     <link rel="stylesheet" href="./style.css">
-    <!-- <link rel="icon" href="./favicon.ico" type="image/x-icon"> -->
   </head>
   <body>
     <main>
-      <h1>2024 Rancher Releases recap</h1>  
+      <div>
+        <img src="https://prime.ribs.rancher.io/assets/img/rancher-suse-logo-horizontal-color.svg" alt="rancher logo" id="rancher-logo">
+        <h1>2024 Rancher releases recap</h1>  
+      </div>
       <div class="info-wrapper">
+
         <div class="rancher-releases">
           <h2 id="rancher-title">Rancher</h2>
+
+          <div class="info-card">
+            <ul>
+              <li>GitHub Actions migration</li>
+              <li>Release train</li>
+              <li>Simplified documentation</li>
+            </ul>
+          </div>
+
           <div class="release-info">
             <p>Total: <span id="rancher-releases-total"></span></p>
-            <p>Total GA: <span id="rancher-ga-total"></span></p>
-            <p>Total Pre-Release: <span id="rancher-pre-total"></span></p>
+            <p>GA: <span id="rancher-ga-total"></span></p>
+            <p>Pre-Release: <span id="rancher-pre-total"></span></p>
           </div>
+
           <div class="chart-container">
             <h3>GA</h3>
             <canvas id="rancher-ga">Your browser does not support canvas</canvas>
           </div>
+
           <div class="chart-container">
             <h3>Pre-Release</h3>
             <canvas id="rancher-pre">Your browser does not support canvas</canvas>
           </div>
+
           <div class="chart-container">
             <h3>Releases over the years</h3>
             <canvas id="rancher-compare-years">Your browser does not support canvas</canvas>
           </div>
         </div>
+
         <div class="rancher-actions">
           <h2 id="rancher-title">Workflows</h2>
-          <div class="release-info">
-            <p>Total: <span id="rancher-prime-releases-total"></span></p>
+
+          <div class="info-card">
+            <ul>
+              <li>Migrated to self-hosted runners</li>
+              <li>Prime registry</li>
+              <li>Prime artifacts bucket</li>
+            </ul>
           </div>
+
+          <div class="release-info">
+            <p>Total: <span id="rancher-actions-total"></span></p>
+            <p>File: push-release.yml</p>
+          </div>
+
           <div class="chart-container">
             <h3>Workflows results</h3>
             <canvas id="rancher-actions-results">Your browser does not support canvas</canvas>
           </div>
         </div>
+
         <div class="rancher-prime-releases">
           <h2 id="rancher-title">Rancher Prime</h2>
+
+          <div class="info-card">
+            <ul>
+              <li>Prime-only hotfix versions</li>
+              <li>10x optimization on images check</li>
+              <li>Self-service images sync</li>
+            </ul>
+          </div>
+
           <div class="release-info">
             <p>Total: <span id="rancher-prime-releases-total"></span></p>
           </div>
+
           <div class="chart-container">
-            <h3>Prime Releases</h3>
+            <h3>Prime Releases (by the release team)</h3>
             <canvas id="rancher-prime-compare-months">Your browser does not support canvas</canvas>
           </div>
+
         </div>
       </div>
     </main>

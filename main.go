@@ -267,3 +267,6 @@ func extractWorkflowsData() (WorkflowsData, error) {
 	}
 	return data, nil
 }
+
+func extractReleasesAlphaToGA() {
+}
