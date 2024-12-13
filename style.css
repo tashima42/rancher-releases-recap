@@ -66,5 +66,8 @@ main {
     margin-right: 5vw;
     width: 90vw;
   }
+  #rancher-mouse {
+    display: none;
+  }
 }
 
